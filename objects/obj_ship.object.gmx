@@ -25,7 +25,31 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>vspeed = 30;
+            <string>physics_apply_local_impulse(0, 0, 5, 5);
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="2">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>view_xview = x - 800;
+view_yview = y - 450;
 </string>
           </argument>
         </arguments>
@@ -48,13 +72,35 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>
-var inst = instance_nearest(x, y, obj_asteroid);
+            <string>var asteroids, forces_x, forces_y;
 
-var rel_x = inst.x - x;
-var rel_y = inst.y - y;
+asteroids = 0;
 
-//physics_apply_local_force(0, 0, rel_x, rel_y)
+var G = 100000;
+
+with(obj_asteroid){
+    var rel_x = x - other.x;
+    var rel_y = y - other.y;
+    
+    var displacement = sqrt(rel_x * rel_x + rel_y * rel_y);
+    var disp_angle = arctan2(rel_x, rel_y);
+    var force_mag = G / (displacement * displacement);
+    
+    forces_x[asteroids] = sin(disp_angle) * force_mag;
+    forces_y[asteroids] = cos(disp_angle) * force_mag;
+    
+    //show_debug_message(forces_x[asteroids]);
+    //show_debug_message(forces_y[asteroids]);
+    //show_debug_message(disp_angle);
+    //show_debug_message(rel_x);
+    //show_debug_message(rel_y);
+    
+    asteroids += 1;
+}
+
+for(var i = 0; i &lt; asteroids; i++){
+    physics_apply_local_force(0, 0, forces_x[i], forces_y[i])   
+}
 </string>
           </argument>
         </arguments>
@@ -67,8 +113,8 @@ var rel_y = inst.y - y;
   <PhysicsObjectDensity>0.5</PhysicsObjectDensity>
   <PhysicsObjectRestitution>0.100000001490116</PhysicsObjectRestitution>
   <PhysicsObjectGroup>0</PhysicsObjectGroup>
-  <PhysicsObjectLinearDamping>0.100000001490116</PhysicsObjectLinearDamping>
-  <PhysicsObjectAngularDamping>0.100000001490116</PhysicsObjectAngularDamping>
+  <PhysicsObjectLinearDamping>0</PhysicsObjectLinearDamping>
+  <PhysicsObjectAngularDamping>0</PhysicsObjectAngularDamping>
   <PhysicsObjectFriction>0</PhysicsObjectFriction>
   <PhysicsObjectAwake>-1</PhysicsObjectAwake>
   <PhysicsObjectKinematic>0</PhysicsObjectKinematic>
